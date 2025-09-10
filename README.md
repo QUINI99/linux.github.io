@@ -1,2 +1,148 @@
-# linux.github.io
-Página web
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestor de Base de Datos</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        form {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        input[type="text"], input[type="number"] {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+        button {
+            padding: 5px 10px;
+            margin-right: 5px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button.delete {
+            background-color: #f44336;
+        }
+        button.edit {
+            background-color: #2196F3;
+        }
+        button:hover {
+            opacity: 0.8;
+        }
+        .edit-form {
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f0f8ff;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gestor de Base de Datos SQLite3</h1>
+
+    <h2>Añadir Registro</h2>
+    <form method="POST" action="/">
+        <input type="hidden" name="action" value="create">
+        <label for="campo1">Campo 1:</label>
+        <input type="text" id="campo1" name="campo1" required><br>
+        <label for="campo2">Campo 2:</label>
+        <input type="text" id="campo2" name="campo2" required><br>
+        <label for="campo3">Campo 3:</label>
+        <input type="text" id="campo3" name="campo3" required><br>
+        <label for="cantidad">Cantidad (numérico):</label>
+        <input type="number" step="0.01" id="cantidad" name="cantidad" required><br>
+        <button type="submit">Añadir</button>
+    </form>
+
+    <h2>Buscar por Cantidad</h2>
+    <form method="GET" action="/">
+        <label for="buscar_cantidad">Filtrar por cantidad:</label>
+        <input type="number" step="0.01" id="buscar_cantidad" name="buscar_cantidad" placeholder="Introduce una cantidad">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <h2>Registros</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Campo 1</th>
+            <th>Campo 2</th>
+            <th>Campo 3</th>
+            <th>Cantidad</th>
+            <th>Acciones</th>
+        </tr>
+        {% for registro in registros %}
+        <tr>
+            <td>{{ registro[0] }}</td>
+            <td>{{ registro[1] }}</td>
+            <td>{{ registro[2] }}</td>
+            <td>{{ registro[3] }}</td>
+            <td>{{ registro[4] }}</td>
+            <td>
+                <button class="edit" onclick="showEditForm({{ registro[0] }}, '{{ registro[1] }}', '{{ registro[2] }}', '{{ registro[3] }}', {{ registro[4] }})">Editar</button>
+                <form method="POST" action="/" style="display: inline;">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="id" value="{{ registro[0] }}">
+                    <button type="submit" class="delete">Borrar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div id="edit-form-container">
+        <div class="edit-form" id="edit-form">
+            <h3>Editar Registro</h3>
+            <form method="POST" action="/">
+                <input type="hidden" name="action" value="edit">
+                <input type="hidden" id="edit-id" name="id" value="">
+                <label for="edit-campo1">Campo 1:</label>
+                <input type="text" id="edit-campo1" name="campo1" required><br>
+                <label for="edit-campo2">Campo 2:</label>
+                <input type="text" id="edit-campo2" name="campo2" required><br>
+                <label for="edit-campo3">Campo 3:</label>
+                <input type="text" id="edit-campo3" name="campo3" required><br>
+                <label for="edit-cantidad">Cantidad (numérico):</label>
+                <input type="number" step="0.01" id="edit-cantidad" name="cantidad" required><br>
+                <button type="submit">Guardar Cambios</button>
+                <button type="button" onclick="hideEditForm()">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showEditForm(id, campo1, campo2, campo3, cantidad) {
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-campo1').value = campo1;
+            document.getElementById('edit-campo2').value = campo2;
+            document.getElementById('edit-campo3').value = campo3;
+            document.getElementById('edit-cantidad').value = cantidad;
+            document.getElementById('edit-form').style.display = 'block';
+        }
+
+        function hideEditForm() {
+            document.getElementById('edit-form').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
